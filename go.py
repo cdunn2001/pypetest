@@ -2,8 +2,6 @@
 import logging
 import sys
 from pypeflow.simple_pwatcher_bridge import (
-    PypeLocalFile, makePypeLocalFile, fn,
-    PypeTask,
     PypeProcWatcherWorkflow, MyFakePypeThreadTaskBase)
 from falcon_unzip import io
 import tasks
@@ -32,20 +30,9 @@ def setup_workflow():
 def main(prog):
     wf = setup_workflow()
     wf.max_jobs = 2
-    i1 = makePypeLocalFile('./in/i1')
-    o1 = makePypeLocalFile('./run/dir1/o1.txt')
-    parameters = {}
-    make_task = PypeTask(
-            inputs={
-                'i1': i1,
-            },
-            outputs={
-                'o1': o1,
-            },
-            parameters=parameters,
-            )
-    a_task = make_task(tasks.taskA)
-    wf.addTask(a_task)
+
+    task = tasks.create_task_old()
+    wf.addTask(task)
     wf.refreshTargets()
 
 if __name__ == '__main__':

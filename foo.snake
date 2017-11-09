@@ -1,4 +1,4 @@
 rule a:
-    input: 'in/i1'
+    input: i1='in/i1'
     output: 'run/dir1/o1.txt'
-    shell: 'cat {input} > {output}'
+    shell: 'cat {input.i1} > {output}'

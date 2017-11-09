@@ -15,7 +15,7 @@ def task_generic_bash_script(self):
     self_dict.update(self.__dict__)
     self_dict.update(self.parameters)
     script_unsub = self.parameters['_bash_']
-    script = script_unsub % self_dict
+    script = script_unsub.format(**self_dict)
     script_fn = 'script.sh'
     with open(script_fn, 'w') as ofs:
         ofs.write(script)
@@ -36,7 +36,7 @@ def create_task_new():
     i1 = './in/i1'
     o1 = './run/dir1/o1.txt'
     script = """
-cat %(i1)s > %(o1)s
+cat {i1} > {o1}
 """
     return gen_task(
             script=script,
@@ -55,9 +55,8 @@ def taskA(self):
     o1 = fn(self.o1)
     script = """
 set -vex
-cat %(i1)s > %(o1)s
-echo taskA
-"""%locals()
+cat {i1} > {o1}
+""".format(**locals())
     script_fn = 'script.sh'
     with open(script_fn, 'w') as ofs:
         ofs.write(script)

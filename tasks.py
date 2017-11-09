@@ -24,6 +24,7 @@ def task_generic_bash_script(self):
 
 def gen_task(script, inputs, outputs, parameters={}):
     parameters['_bash_'] = script
+    script = 'set -vex\n' + script
     make_task = PypeTask(
             inputs={k: makePypeLocalFile(v) for k,v in inputs.iteritems()},
             outputs={k: makePypeLocalFile(v) for k,v in outputs.iteritems()},
@@ -35,9 +36,7 @@ def create_task_new():
     i1 = './in/i1'
     o1 = './run/dir1/o1.txt'
     script = """
-set -vex
 cat %(i1)s > %(o1)s
-echo taskA
 """
     return gen_task(
             script=script,

@@ -3,28 +3,24 @@ from pypeflow.simple_pwatcher_bridge import (
     PypeLocalFile, makePypeLocalFile, fn,
     PypeTask,
     PypeProcWatcherWorkflow, MyFakePypeThreadTaskBase)
-import sys
 from falcon_unzip import io
-
-def taskA(self):
-    o1_fn = fn(self.o1)
-    script = """
-#!/bin/bash
-set -vex
-touch %(o1_fn)s
-echo taskA
-"""%locals()
-    script_fn = 'script.sh'
-    with open(script_fn, 'w') as ofs:
-        ofs.write(script)
-    self.generated_script_fn = script_fn
+import sys
+import tasks
 
 def main(prog):
     print 'hi'
     #io.mkdirs('run')
-    return
+    config = {
+        'job_type': 'string',
+        'job_queue': 'bash -C ${CMD} >| ${STDOUT_FILE} 2>| ${STDERR_FILE}',
+        #'job_queue': 'bash -C ${CMD}',
+        #'sge_option': '-pe smp 8 -q bigmem',
+        'pwatcher_type': 'blocking',
+        #watcher_directory=config.get('pwatcher_directory', 'mypwatcher'),
+        #'use_tmpdir': '/scratch',
+    }
     wf = PypeProcWatcherWorkflow(
-        max_jobs=unzip_blasr_concurrent_jobs,
+        max_jobs=4,
         job_type=config['job_type'],
         job_queue=config.get('job_queue'),
         sge_option=config.get('sge_option'),
@@ -35,7 +31,18 @@ def main(prog):
     wf.max_jobs = 2
     i1 = makePypeLocalFile('./in/i1')
     o1 = makePypeLocalFile('./run/dir1/o1.txt')
-    wf.addTask(taskAA)
+    parameters = {}
+    make_task = PypeTask(
+            inputs={
+                'i1': i1,
+            },
+            outputs={
+                'o1': o1,
+            },
+            parameters=parameters,
+            )
+    a_task = make_task(tasks.taskA)
+    wf.addTask(a_task)
     wf.refreshTargets()
 
 if __name__ == '__main__':

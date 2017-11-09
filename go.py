@@ -31,7 +31,8 @@ def main(prog):
     wf = setup_workflow()
     wf.max_jobs = 2
 
-    task = tasks.create_task_old()
+    #task = tasks.create_task_old()
+    task = tasks.create_task_new()
     wf.addTask(task)
     wf.refreshTargets()
 

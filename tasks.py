@@ -11,10 +11,10 @@ def task_generic_bash_script(self):
     the content of "self" and of "self.parameters".
     (That is a little messy, but good enough for now.)
     """
-    script = self.parameters('_bash_')
     self_dict = dict()
-    self_dict.update(self)
+    self_dict.update(self.__dict__)
     self_dict.update(self.parameters)
+    script_unsub = self.parameters['_bash_']
     script = script_unsub % self_dict
     script_fn = 'script.sh'
     with open(script_fn, 'w') as ofs:
@@ -22,7 +22,7 @@ def task_generic_bash_script(self):
     self.generated_script_fn = script_fn
 
 
-def gen_task(wf, script, inputs, outputs, parameters={}):
+def gen_task(script, inputs, outputs, parameters={}):
     parameters['_bash_'] = script
     make_task = PypeTask(
             inputs={k: makePypeLocalFile(v) for k,v in inputs.iteritems()},

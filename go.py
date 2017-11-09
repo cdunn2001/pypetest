@@ -1,15 +1,14 @@
 #!/bin/env python2.7
+import logging
+import sys
 from pypeflow.simple_pwatcher_bridge import (
     PypeLocalFile, makePypeLocalFile, fn,
     PypeTask,
     PypeProcWatcherWorkflow, MyFakePypeThreadTaskBase)
 from falcon_unzip import io
-import sys
 import tasks
 
-def main(prog):
-    print 'hi'
-    #io.mkdirs('run')
+def setup_workflow():
     config = {
         'job_type': 'string',
         'job_queue': 'bash -C ${CMD} >| ${STDOUT_FILE} 2>| ${STDERR_FILE}',
@@ -28,6 +27,10 @@ def main(prog):
         #watcher_directory=config.get('pwatcher_directory', 'mypwatcher'),
         use_tmpdir=config.get('use_tmpdir'),
     )
+    return wf
+
+def main(prog):
+    wf = setup_workflow()
     wf.max_jobs = 2
     i1 = makePypeLocalFile('./in/i1')
     o1 = makePypeLocalFile('./run/dir1/o1.txt')
@@ -46,4 +49,5 @@ def main(prog):
     wf.refreshTargets()
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, formatter=None)
     main(*sys.argv)

@@ -1,7 +1,10 @@
+import collections
+import logging
 from pypeflow.simple_pwatcher_bridge import (
     PypeLocalFile, makePypeLocalFile, fn,
     PypeTask,
 )
+LOG = logging.getLogger(__name__)
 
 def task_generic_bash_script(self):
     """Generic script task.
@@ -23,6 +26,16 @@ def task_generic_bash_script(self):
 
 
 def gen_task(script, inputs, outputs, parameters={}):
+    def validate_dict(mydict):
+        "Python identifiers are illegal as keys."
+        try:
+            collections.namedtuple('validate', mydict.keys())
+        except ValueError as exc:
+            LOG.exception('Bad key name in task definition dict {!r}'.format(mydict))
+            raise
+    validate_dict(inputs)
+    validate_dict(outputs)
+    validate_dict(parameters)
     parameters['_bash_'] = script
     make_task = PypeTask(
             inputs={k: makePypeLocalFile(v) for k,v in inputs.iteritems()},

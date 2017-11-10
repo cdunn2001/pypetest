@@ -24,14 +24,6 @@ def task_generic_bash_script(self):
 
 def gen_task(script, inputs, outputs, parameters={}):
     parameters['_bash_'] = script
-    # Like snakemake, we use bash "strict mode", but we add -vx.
-    # http://redsymbol.net/articles/unofficial-bash-strict-mode/
-    prefix = """
-set -vxeuo pipefail
-IFS=$'\n\t'
-
-"""
-    script = prefix + script
     make_task = PypeTask(
             inputs={k: makePypeLocalFile(v) for k,v in inputs.iteritems()},
             outputs={k: makePypeLocalFile(v) for k,v in outputs.iteritems()},

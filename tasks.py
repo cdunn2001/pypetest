@@ -48,7 +48,7 @@ def create_task_new():
     i1 = './in/i1'
     o1 = './run/dir1/o1.txt'
     script = """
-cat {i1} > {o1}
+cat {input.i1} > {output.o1}
 """
     return gen_task(
             script=script,

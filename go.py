@@ -3,7 +3,6 @@ import logging
 import sys
 from pypeflow.simple_pwatcher_bridge import (
     PypeProcWatcherWorkflow, MyFakePypeThreadTaskBase)
-from falcon_unzip import io
 import tasks
 
 def setup_workflow():
